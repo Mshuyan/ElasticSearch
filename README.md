@@ -38,13 +38,45 @@
 
 ## 安装
 
-> 到[官网](https://www.elastic.co/cn/downloads/)下载
-
 ### ElasticSearch
 
-+ 解压缩
++ 到[官网](https://www.elastic.co/cn/downloads/)下载并解压
 
-+ 运行`bin/elasticsearch`文件，启动服务
++ 配置修改
+
+  + 因为linux系统限制，需要将创建文件数修改为65536，线程数修改为4096
+
+    ```
+    vim /etc/security/limits.conf
+    
+    # 末尾新增
+    es soft nofile 65536
+    es hard nofile 65536
+    es soft nproc 4096
+    es hard nproc 4096
+    ```
+
+  + 修改系统最大可开辟虚拟内存空间大小
+
+    ```
+    vim /etc/sysctl.conf
+    
+    # 新增
+    vm.max_map_count=262144
+    
+    # 配置生效
+    sysctl -p
+    ```
+
++ es不能使用root用户启动，需要创建用户并赋予目录权限
+
+  ```
+  usradd es
+  passwd es
+  chown -R es elasticsearch-7.12.0
+  ```
+
++ es用户运行`bin/elasticsearch`文件，启动服务
 
   默认启动2个端口：9300（TCP服务）、9200（http服务）
 
